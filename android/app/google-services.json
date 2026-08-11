@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "520513571423",
+    "project_id": "mivo-video-call",
+    "storage_bucket": "mivo-video-call.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520513571423:android:ae95b3dc7bd6ee4e82a9ea",
+        "android_client_info": {
+          "package_name": "com.example.mivo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcSRIluX9s-sUhfOB2AMfyuaw3WhCPQ1Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
