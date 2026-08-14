@@ -12,7 +12,20 @@
           "package_name": "com.example.mivo"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "520513571423-vrttd6bea29kdrrunls8okhglr2t93jh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mivo",
+            "certificate_hash": "94ae8bf5fcec2f0199a30353addaee52c3d34026"
+          }
+        },
+        {
+          "client_id": "520513571423-u8gj9ebcn2cdlj129kv5ttd74v1k2tgp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBcSRIluX9s-sUhfOB2AMfyuaw3WhCPQ1Y"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520513571423-u8gj9ebcn2cdlj129kv5ttd74v1k2tgp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "520513571423-un7uo9mve8emn1mm76s77rj57ls4v7gq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mivo"
+              }
+            }
+          ]
         }
       }
     }

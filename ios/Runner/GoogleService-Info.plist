@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>520513571423-un7uo9mve8emn1mm76s77rj57ls4v7gq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.520513571423-un7uo9mve8emn1mm76s77rj57ls4v7gq</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>520513571423-vrttd6bea29kdrrunls8okhglr2t93jh.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDJp8ApqMAZqxStdW2_cyY7eXdxOTEP8XQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>520513571423</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.mivo</string>
+	<key>PROJECT_ID</key>
+	<string>mivo-video-call</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mivo-video-call.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:520513571423:ios:e4c20d86112f851782a9ea</string>
+</dict>
+</plist>
