@@ -57,13 +57,21 @@ class GoogleAuthService {
             'email': user.email ?? '',
             'photoURL': user.photoURL ?? '',
             'provider': 'google',
+            'isOnline': true,
+            'lastSeen': FieldValue.serverTimestamp(),
             'createdAt': FieldValue.serverTimestamp(),
+          });
+        }else{
+          //update user online status for existing user
+          await userDoc.update({
+            'isOnline': true,
+            'lastSeen': FieldValue.serverTimestamp(),
           });
         }
       }
       return userCredential;
     } catch (e) {
-      rethrow;
+      print('Error: $e');
     }
   }
 

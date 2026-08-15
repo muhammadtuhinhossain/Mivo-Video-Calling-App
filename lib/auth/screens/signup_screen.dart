@@ -47,8 +47,12 @@ class SignupScreen extends ConsumerWidget {
             Container(
               height: height / 2.4,
               width: double.maxFinite,
-              decoration: BoxDecoration(),
-              child: Image.asset("assets/77881.jpg", fit: BoxFit.cover),
+              decoration: const BoxDecoration(),
+              child: Image.network(
+                "https://img.freepik.com/free-vector/sign-up-concept-illustration_114360-7885.jpg",
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => const Icon(Icons.image, size: 100, color: Colors.grey),
+              ),
             ),
             SizedBox(height: 20),
             Padding(

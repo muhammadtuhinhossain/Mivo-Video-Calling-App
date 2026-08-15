@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 class AuthMethod {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -58,12 +59,17 @@ class AuthMethod {
   }
   //Logout with online status update
   Future<void> signOut() async {
-    if (_auth.currentUser != null) {
-      // Set offline before signing out
-      await _firestore.collection('users').doc(_auth.currentUser!.uid).update({
-        'isOnline': false,
-        'lastSeen': FieldValue.serverTimestamp(),
-      });
+    final user = _auth.currentUser;
+    if (user != null) {
+      try {
+        // Set offline before signing out
+        await _firestore.collection('users').doc(user.uid).set({
+          'isOnline': false,
+          'lastSeen': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      } catch (e) {
+        debugPrint("Error updating status during logout: $e");
+      }
     }
     await _auth.signOut();
   }
