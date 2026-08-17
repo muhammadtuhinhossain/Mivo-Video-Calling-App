@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:mivo/auth/service/auth_service.dart';
+import 'package:mivo/chat/provider/provider.dart';
+import 'package:mivo/chat/provider/user_list_provider.dart';
 import 'package:mivo/chat/provider/user_profile_provider.dart';
 import 'package:mivo/chat/screen/user_list_screen.dart';
 import 'package:mivo/auth/screens/user_login_screen.dart';
@@ -143,6 +145,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       await ref.read(authMethodProvider).signOut();
                       //invalidate all providers
                       ref.invalidate(profileProvider);
+                      ref.invalidate(userListProvider);
+                      ref.invalidate(requestProvider);
+                      ref.invalidate(usersProvider);
+                      ref.invalidate(filteredUsersProvider);
+                      ref.invalidate(searchQueryProvider);
+
                       if(context.mounted){
                         Navigator.pushAndRemoveUntil(
                           context, 
