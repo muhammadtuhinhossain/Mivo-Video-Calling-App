@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mivo/chat/model/user_list_model.dart';
 import 'package:mivo/chat/model/user_model.dart';
 import 'package:mivo/chat/provider/user_list_provider.dart';
+import 'package:mivo/chat/provider/user_status_provider.dart';
 import 'package:mivo/chat/screen/chat%20screen/chat_screen.dart';
 import 'package:mivo/core/route.dart';
 import 'package:mivo/core/utils/chat_id.dart';
@@ -29,7 +30,21 @@ class UserListTile extends ConsumerWidget {
       ),
       title: Text(user.name, maxLines: 1, overflow: TextOverflow.ellipsis,),
       //show online / offline status in subtitle
-      subtitle: Text("Offline"),//we will make if functional some time later
+      subtitle: Consumer(
+          builder: (context, ref, _){
+            final statusAsync = ref.watch(userStatusProvider(user.uid));
+            return statusAsync.when(
+                data: (isOnline)=> Text(
+                  isOnline ? 'Online' : 'Offline',
+                  style: TextStyle(
+                    color: isOnline ? Colors.green : Colors.grey,
+                  ),
+                ),
+                error: (_, _)=> Text(user.email),
+                loading: ()=> Text(user.email),
+            );
+          }
+      ),
       //Rifht-side action button (char, add friend, accept request, etc)
       trailing: _buildTrailingWidget(context, ref, state, notifier),
     );

@@ -1,8 +1,13 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart'; // Add this for unawaited
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mivo/chat/screen/app_home_screen.dart';
+import 'package:mivo/core/secret/secret.dart';
 import 'package:mivo/core/wrapper%20state/app_state_manager.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
+import 'package:zego_uikit_signaling_plugin/zego_uikit_signaling_plugin.dart';
 
 class AuthenticationWrapper extends ConsumerStatefulWidget {
   const AuthenticationWrapper({super.key});
@@ -32,13 +37,30 @@ class _AuthenticationWrapperState extends ConsumerState<AuthenticationWrapper> {
         },
       );
 
+      // Initialize Zego after user session is ready
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Initialize Zego without blocking the whole UI setup
+        unawaited(ZegoUIKitPrebuiltCallInvitationService().init(
+          appID: ZegoConfig.appID,
+          appSign: ZegoConfig.appSign,
+          userID: user.uid,
+          userName: user.displayName ?? "User ${user.uid.substring(0, 4)}",
+          plugins: [ZegoUIKitSignalingPlugin()],
+          invitationEvents: ZegoUIKitPrebuiltCallInvitationEvents(),
+        ).catchError((e) {
+          debugPrint("Zego Init Error: $e");
+          return false;
+        }));
+      }
+
       if (mounted) {
         setState(() {
           _isinitialized = true;
         });
       }
     } catch (e) {
-      debugPrint("Error initializing session : $e");
+      debugPrint("Error initializing session or Zego: $e");
       if (mounted) {
         // still allow moving forward even if init fails
         setState(() {

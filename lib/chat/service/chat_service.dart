@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mivo/chat/model/chat_model.dart';
+import 'package:mivo/chat/model/message_model.dart';
 import 'package:mivo/chat/model/message_request_model.dart';
 import 'package:mivo/chat/model/user_model.dart';
 
@@ -24,6 +26,17 @@ Stream<List<UserModel>> getAllUsers(){
           .toList(),
   );
 }
+//OnlineStatus
+  Future<void> updateUserOnlineStatus(bool isOnline)async{
+  if(currentUserId.isEmpty)return;
+  try{
+    await _firestore.collection("users").doc(currentUserId).update({
+      "isOnline": isOnline,
+      "lastSeen": FieldValue.serverTimestamp(),
+    });
+  }catch(e) {}
+  }
+
 // are user friends
   Future<bool> areUsersFriends(String userID1, String userID2)async{
     final chatId = generateChatID(userID1, userID2);
@@ -37,6 +50,31 @@ Stream<List<UserModel>> getAllUsers(){
     return exists;
   }
 
+  //unfriend user
+  Future<String> unfriendUser(String chatId, String friendId)async{
+    try{
+      final batch = _firestore.batch();
+      // delete friendship
+      batch.delete(_firestore.collection('friendships').doc(chatId));
+      // delete chat
+      batch.delete(_firestore.collection('chats').doc(chatId));
+      //delete all message in the chat
+
+      final messages = await _firestore
+          .collection("messages")
+          .where('chatId', isEqualTo: chatId)
+          .get();
+
+      for (final doc in messages.docs){
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+      return 'success';
+    }catch(e){
+      return e.toString();
+    }
+  }
+
   //message request
   Future<String> sendMessageRequest({
   required String  receiverId,
@@ -46,6 +84,17 @@ Stream<List<UserModel>> getAllUsers(){
   try{
     final currentUser = _auth.currentUser!;
     final requestId = '${currentUserId}_$receiverId';
+    //get photo url from firebase user collection
+    final userDoc = await _firestore
+    .collection("users")
+    .doc(currentUserId)
+    .get();
+
+    String? userPhotoURL;
+    if(userDoc.exists){
+      final userModel = UserModel.fromMap(userDoc.data()!);
+      userPhotoURL = userModel.photoURL;
+    }
 
     final existingRequest = await _firestore
     .collection("messageRequests")
@@ -62,7 +111,7 @@ Stream<List<UserModel>> getAllUsers(){
         senderEmail: currentUser.email ?? '',
         status: 'pending',
         createdAt: DateTime.now(),
-        photoURL: currentUser.photoURL,
+        photoURL: userPhotoURL,
     );
     await _firestore
     .collection('messageRequests')
@@ -99,7 +148,7 @@ Stream<List<UserModel>> getAllUsers(){
 
     //create friendship
     final friendshipId = generateChatID(currentUserId, senderId);
-    batch.set(_firestore.collection('friendship').doc(friendshipId), {
+    batch.set(_firestore.collection('friendships').doc(friendshipId), {
       'participants': [currentUserId, senderId],
       'createdAt': FieldValue.serverTimestamp(),
     });
@@ -149,6 +198,47 @@ Stream<List<UserModel>> getAllUsers(){
     return e.toString();
   }
   }
+// add caching for Chats
+//final Map<String, List<ChatModel>> _chatsCache = {};
 
+Stream<List<ChatModel>> getUserChats(){
+  if(currentUserId.isEmpty) return Stream.value([]);
+  return _firestore
+      .collection("chats")
+  //if you have user orderBy and where on some collection then you need to add a indexing
+      .where("participants", arrayContains: currentUserId)
+      .orderBy("lastMessageTime", descending: true)
+      .limit(20)
+      .snapshots()
+      .map((snapshots){
+     final docs = snapshots.docs
+     .map((doc)=> ChatModel.fromMap(doc.data()))
+     .toList();
+     return docs;
+  });
+}
+Stream <List<MessageModel>> getChatMessage(
+    String chatId,{
+      int limit = 20,
+      DocumentSnapshot? lastDocument,
+}){
+  Query query = _firestore
+      .collection('message')
+  //if you have user orderBy and where on some collection then you need to add a indexing
+      .where('chatId', isEqualTo: chatId)
+      .orderBy('timestamp', descending: true)
+      .limit(limit);
 
+  if(lastDocument != null){
+    query = query.startAfterDocument(lastDocument);
+  }
+  return query.snapshots().map((snapshot){
+    final docs = snapshot.docs
+        .map(
+        (doc)=> MessageModel.fromMap(doc.data()as Map<String, dynamic>),
+    ).toList();
+    print("sizeofDocs2 ${docs.length}");
+    return docs;
+  });
+}
 }

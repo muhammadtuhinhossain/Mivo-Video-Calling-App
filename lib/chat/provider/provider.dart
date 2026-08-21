@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mivo/chat/model/chat_model.dart';
 import 'package:mivo/chat/model/message_request_model.dart';
 import 'package:mivo/chat/model/user_model.dart';
 import 'package:mivo/chat/service/chat_service.dart';
@@ -62,6 +63,7 @@ class RequestNotifier
           state = AsyncValue.error(error, stackTrace),
     );
   }
+
   Future<void> acceptRequest(String requestId, String senderId)async{
     await _chatService.acceptMessageRequest(requestId, senderId);
     _init();
@@ -97,6 +99,36 @@ final autoRefreshProvider = Provider<void>((ref){
       }
     });
   });
+});
+
+//Chat
+class ChatsNotifier extends StateNotifier<AsyncValue<List<ChatModel>>>{
+  final ChatService _chatService;
+  StreamSubscription<List<ChatModel>>? _subscription;
+  ChatsNotifier(this._chatService) : super(AsyncValue.loading()) {
+    _init();
+  }
+
+  void _init() {
+    _subscription?.cancel();
+    _subscription = _chatService.getUserChats().listen(
+          (chats) => state = AsyncValue.data(chats),
+      onError: (error, stackTrace) =>
+      state = AsyncValue.error(error, stackTrace),
+    );
+  }
+  void refresh()=> _init();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _subscription?.cancel();
+  }
+}
+final chatsProvider = StateNotifierProvider<ChatsNotifier, AsyncValue<List<ChatModel>>>((ref){
+  final service = ref.watch(chatServiceProvider);
+  return ChatsNotifier(service);
 });
 
 //search

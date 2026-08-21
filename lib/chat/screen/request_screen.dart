@@ -30,7 +30,7 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
           IconButton(
               onPressed: ()=> ref.invalidate(requestProvider),
               icon: Icon(Icons.refresh),
-          );
+          ),
         ],
       ),
     //handle provider states (date, loading error)
@@ -58,12 +58,17 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
     margin: .all(8),
     child: ListTile(
     leading: CircleAvatar(
-    radius: 28,
+    radius: 25,
     backgroundImage: request.photoURL != null
     ?NetworkImage(request.photoURL!)
     :null,
     child: request.photoURL == null
-    ?Icon(Icons.person,size: 30,)
+        ?Text(
+      request.senderName.isNotEmpty
+          ?request.senderName[0].toLowerCase()
+          :"U",
+    )
+    // ?Icon(Icons.person,size: 30,)
     :null,
     ),
     title: Text(request.senderName),

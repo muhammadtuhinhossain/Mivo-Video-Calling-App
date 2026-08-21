@@ -111,6 +111,7 @@ class UserListNotifier extends StateNotifier<UserListTileState> {
       );
       //refresh provider
       ref.invalidate(requestProvider);
+      ref.invalidate(chatsProvider);
     } else {
       state = state.copyWith(isLoading: false);
     }
@@ -119,5 +120,8 @@ class UserListNotifier extends StateNotifier<UserListTileState> {
 }
 
 final userListProvider =
-    StateNotifierProvider.family<UserListNotifier, UserListTileState, UserModel>(
-        (ref, user) => UserListNotifier(ref, user));
+    StateNotifierProvider.family<
+        UserListNotifier,
+        UserListTileState,
+        UserModel
+    >((ref, user) => UserListNotifier(ref, user));
